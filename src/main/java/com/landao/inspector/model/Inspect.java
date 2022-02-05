@@ -5,7 +5,9 @@ import com.landao.inspector.annotations.special.TelePhone;
 import com.landao.inspector.utils.InspectUtils;
 import com.landao.inspector.utils.InspectorManager;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.ClassUtils;
 
+import java.lang.reflect.AnnotatedType;
 import java.util.Objects;
 
 /**
@@ -29,7 +31,24 @@ public interface Inspect {
     }
 
     default void addIllegal(String fieldName,String illegalReason){
-        InspectorManager.addIllegal(this.getClass().getSimpleName()+"."+fieldName,illegalReason);
+        InspectorManager.addIllegal(getClassName()+fieldName,illegalReason);
+    }
+
+    default String getClassName(){
+        Class<? extends Inspect> thisClazz = this.getClass();
+        if(ClassUtils.isInnerClass(thisClazz)){
+            return getClassName(thisClazz.getSuperclass(),thisClazz.getSimpleName()+".");
+        }else {
+            return "";
+        }
+    }
+
+    default String getClassName(Class<?> clazz,String className){
+        if(ClassUtils.isInnerClass(clazz)){
+            return getClassName(clazz.getSuperclass(),className+".");
+        }else {
+            return clazz.getSimpleName()+"."+className;
+        }
     }
 
 }

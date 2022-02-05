@@ -60,7 +60,7 @@ public class InspectAspect implements Ordered {
     }
 
     @Around("doPointCut()")
-    public Object inspectBean(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object inspect(ProceedingJoinPoint joinPoint) throws Throwable {
         //获取分组
         MethodSignature methodSignature =(MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
@@ -87,11 +87,11 @@ public class InspectAspect implements Ordered {
                 continue;
             }
             if(arg instanceof Inspect){
-                inspectBean(arg,group);
+                inspectBean(arg,null,group);
                 Inspect inspect = (Inspect) arg;
                 inspect.inspect(group);
             }else if(isRequestBody(argType) || isInspectField(argType)){
-                inspectBean(arg,group);
+                inspectBean(arg,null,group);
             }else if(inspectors.containsKey(argType)){
                 Parameter parameter = parameters[i];
                 FeedBack feedBack = inspectors.get(argType).inspect(parameter, arg, "", parameter.getName(), group);
@@ -118,28 +118,51 @@ public class InspectAspect implements Ordered {
      * 处理没有特殊情况的校验
      * @param bean 需要校验的对象
      */
-    public void inspectBean(Object bean, Class<?> group){
+    public void inspectBean(Object bean,String className, Class<?> group){
         Class<?> beanClass = bean.getClass();
         Field[] fields = beanClass.getDeclaredFields();
+        InspectBean inspectBean = AnnotationUtils.findAnnotation(beanClass, InspectBean.class);
+        String beanName="";
+        if(inspectBean!=null){
+            beanName=inspectBean.name();
+        }
+
         for (Field field : fields) {
             Class<?> fieldType = field.getType();
             Inspector inspector = inspectors.get(fieldType);
             if(inspector!=null){
                 ReflectionUtils.makeAccessible(field);
                 Object value = ReflectionUtils.getField(field, bean);
-                String beanName="";
-                InspectBean inspectBean = AnnotationUtils.findAnnotation(beanClass, InspectBean.class);
-                if(inspectBean!=null){
-                    beanName=inspectBean.name();
-                }
                 FeedBack feedBack = inspector.inspect(field, value, beanName, getFieldName(bean, field), group);
                 if(feedBack.requiresNewValue()){
                     ReflectionUtils.setField(field,bean,feedBack.getNewValue());
                 }
-            }else {
-                throw new InspectorException("不支持的类型:"+fieldType.getName());
+            }else if(annotatedInspectBean(field)){//嵌套
+                if(className!=null){
+                    className+="."+bean.getClass().getSimpleName();
+                }
+                ReflectionUtils.makeAccessible(field);
+                Object innerBean = ReflectionUtils.getField(field, bean);
+                if(innerBean==null){
+                    InspectBean innerInspectBean = AnnotationUtils.findAnnotation(field, InspectBean.class);
+                    assert innerInspectBean != null;
+                    if(!innerInspectBean.nullable()){
+                        addIllegal(className,innerInspectBean.name()+"不能为空");
+                    }
+                }else {
+                    inspectBean(innerBean,className,group);
+                }
             }
         }
+    }
+
+    private void addIllegal(String fieldName , String illegalReason) {
+        InspectorManager.addIllegal(fieldName, illegalReason);
+    }
+
+    private boolean annotatedInspectBean(Field field){
+        InspectBean inspectBean = AnnotationUtils.findAnnotation(field, InspectBean.class);
+        return inspectBean!=null;
     }
 
     private String getFieldName(Object bean, Field field){

@@ -4,7 +4,6 @@ import com.landao.inspector.annotations.Inspected;
 import com.landao.inspector.annotations.special.Email;
 import com.landao.inspector.annotations.special.Regex;
 import com.landao.inspector.annotations.special.TelePhone;
-import com.landao.inspector.core.AbstractInspector;
 import com.landao.inspector.core.Handler;
 import com.landao.inspector.model.FeedBack;
 import com.landao.inspector.model.collection.TypeSet;
@@ -12,12 +11,9 @@ import com.landao.inspector.model.enums.TrimType;
 import com.landao.inspector.utils.InspectUtils;
 
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.lang.reflect.Parameter;
 import java.util.regex.Pattern;
 
 @Handler

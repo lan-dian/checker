@@ -1,10 +1,11 @@
-package com.landao.inspector.core;
+package com.landao.inspector.core.inspector;
 
 import com.landao.inspector.annotations.InspectBean;
 import com.landao.inspector.annotations.Inspected;
 import com.landao.inspector.annotations.special.group.AddIgnore;
 import com.landao.inspector.annotations.special.group.Id;
 import com.landao.inspector.annotations.special.group.UpdateIgnore;
+import com.landao.inspector.core.Inspector;
 import com.landao.inspector.model.FeedBack;
 import com.landao.inspector.model.collection.TypeSet;
 import com.landao.inspector.model.exception.InspectorException;
@@ -94,14 +95,6 @@ public abstract class AbstractInspector implements Inspector {
 
     protected final boolean isUpdateGroup(Class<?> group) {
         return InspectUtils.isUpdateGroup(group);
-    }
-
-    private String getFieldName(Object bean, Field field){
-        return bean.getClass().getSimpleName() +"."+field.getName();
-    }
-
-    protected void addIllegal(String name , String illegalReason) {
-        InspectorManager.addIllegal(name, illegalReason);
     }
 
     private boolean requireSetNull(AnnotatedElement field) {

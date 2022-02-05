@@ -1,24 +1,12 @@
 package com.landao.inspector.core.inspector;
 
 import com.landao.inspector.annotations.Inspected;
-import com.landao.inspector.annotations.special.group.AddGroup;
-import com.landao.inspector.annotations.special.group.Id;
-import com.landao.inspector.annotations.special.group.UpdateGroup;
-import com.landao.inspector.core.AbstractInspector;
 import com.landao.inspector.core.Handler;
-import com.landao.inspector.core.Inspector;
 import com.landao.inspector.model.FeedBack;
 import com.landao.inspector.model.collection.TypeSet;
-import com.landao.inspector.utils.InspectUtils;
-import com.landao.inspector.utils.InspectorManager;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.lang.Nullable;
-import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.Set;
 
 @Handler
 public class LongInspector extends AbstractInspector{
