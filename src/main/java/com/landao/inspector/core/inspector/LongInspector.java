@@ -33,7 +33,7 @@ public class LongInspector extends AbstractInspector{
         long min = inspected.min();
         long max = inspected.max();
         if(fieldValue<min || fieldValue>max){
-            return FeedBack.illegal(fieldName,disPlayName);
+            return FeedBack.illegal(fieldName,disPlayName+"必须在"+min+"-"+max+"之间");
         }
 
         return FeedBack.pass();

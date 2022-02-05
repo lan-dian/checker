@@ -18,12 +18,14 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -87,11 +89,11 @@ public class InspectAspect implements Ordered {
                 continue;
             }
             if(arg instanceof Inspect){
-                inspectBean(arg,null,group);
+                inspectBean(arg,"",group);
                 Inspect inspect = (Inspect) arg;
                 inspect.inspect(group);
             }else if(isRequestBody(argType) || isInspectField(argType)){
-                inspectBean(arg,null,group);
+                inspectBean(arg,"",group);
             }else if(inspectors.containsKey(argType)){
                 Parameter parameter = parameters[i];
                 FeedBack feedBack = inspectors.get(argType).inspect(parameter, arg, "", parameter.getName(), group);
@@ -129,23 +131,22 @@ public class InspectAspect implements Ordered {
 
         for (Field field : fields) {
             Class<?> fieldType = field.getType();
+
             Inspector inspector = inspectors.get(fieldType);
             if(inspector!=null){
                 ReflectionUtils.makeAccessible(field);
                 Object value = ReflectionUtils.getField(field, bean);
-                FeedBack feedBack = inspector.inspect(field, value, beanName, getFieldName(bean, field), group);
+                FeedBack feedBack = inspector.inspect(field, value, beanName,className+field.getName(), group);
                 if(feedBack.requiresNewValue()){
                     ReflectionUtils.setField(field,bean,feedBack.getNewValue());
                 }
             }else if(annotatedInspectBean(field)){//嵌套
-                if(className!=null){
-                    className+="."+bean.getClass().getSimpleName();
-                }
+                className=field.getName()+".";
                 ReflectionUtils.makeAccessible(field);
                 Object innerBean = ReflectionUtils.getField(field, bean);
                 if(innerBean==null){
                     InspectBean innerInspectBean = AnnotationUtils.findAnnotation(field, InspectBean.class);
-                    assert innerInspectBean != null;
+                    assert innerInspectBean!=null;
                     if(!innerInspectBean.nullable()){
                         addIllegal(className,innerInspectBean.name()+"不能为空");
                     }
@@ -163,10 +164,6 @@ public class InspectAspect implements Ordered {
     private boolean annotatedInspectBean(Field field){
         InspectBean inspectBean = AnnotationUtils.findAnnotation(field, InspectBean.class);
         return inspectBean!=null;
-    }
-
-    private String getFieldName(Object bean, Field field){
-        return bean.getClass().getSimpleName() +"."+field.getName();
     }
 
     private boolean isRequestBody(Class<?> parameterType){

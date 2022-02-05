@@ -1,12 +1,14 @@
 package com.landao.inspector.core.inspector;
 
 import com.landao.inspector.annotations.Inspected;
+import com.landao.inspector.core.Handler;
 import com.landao.inspector.model.FeedBack;
 import com.landao.inspector.model.collection.TypeSet;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.reflect.AnnotatedElement;
 
+@Handler
 public class IntegerInspector extends AbstractInspector{
 
     @Override
@@ -31,7 +33,7 @@ public class IntegerInspector extends AbstractInspector{
         long min = inspected.min();
         long max = inspected.max();
         if(fieldValue<min || fieldValue>max){
-            return FeedBack.illegal(fieldName,disPlayName);
+            return FeedBack.illegal(fieldName,disPlayName+"必须在"+min+"-"+max+"之间");
         }
 
         return FeedBack.pass();
