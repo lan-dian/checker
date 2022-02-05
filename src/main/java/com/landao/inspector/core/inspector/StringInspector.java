@@ -5,6 +5,7 @@ import com.landao.inspector.annotations.special.Email;
 import com.landao.inspector.annotations.special.Regex;
 import com.landao.inspector.annotations.special.TelePhone;
 import com.landao.inspector.core.AbstractInspector;
+import com.landao.inspector.core.Handler;
 import com.landao.inspector.model.FeedBack;
 import com.landao.inspector.model.collection.TypeSet;
 import com.landao.inspector.model.enums.TrimType;
@@ -19,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
 import java.util.regex.Pattern;
 
+@Handler
 public class StringInspector extends AbstractInspector {
 
     @Override

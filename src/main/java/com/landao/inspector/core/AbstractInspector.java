@@ -34,35 +34,35 @@ public abstract class AbstractInspector implements Inspector {
     public abstract TypeSet supportedChain(TypeSet set);
 
     @Override
-    public FeedBack inspect(AnnotatedElement field, Object value, String className, String fieldName, Class<?> group) {
+    public FeedBack inspect(AnnotatedElement annotatedElement, Object value, String beanName, String fieldName, Class<?> group) {
         if (group != null) {
             if (isAddGroup(group)) {//就处理这两种,其他放行
-                if (requireSetNull(field)) {
+                if (requireSetNull(annotatedElement)) {
                     return FeedBack.pass(null);
                 }
             } else if (isUpdateGroup(group)) {
-                UpdateIgnore updateIgnore = AnnotationUtils.findAnnotation(field, UpdateIgnore.class);
+                UpdateIgnore updateIgnore = AnnotationUtils.findAnnotation(annotatedElement, UpdateIgnore.class);
                 if (updateIgnore != null) {
                     return FeedBack.pass(null);
                 }
-                Id id = AnnotationUtils.findAnnotation(field, Id.class);
+                Id id = AnnotationUtils.findAnnotation(annotatedElement, Id.class);
                 if (id != null) {
                     String idName=getIdName(fieldName);
                     if(value==null){
-                        return FeedBack.illegal(fieldName,"修改"+className+"时必须指明"+idName);
+                        return FeedBack.illegal(fieldName,"修改"+beanName+"时必须指明"+idName);
                     }
                     Class<?> valueType = value.getClass();
                     if (isLong(valueType)) {
                         if ( (Long) value <= 0) {
-                            return FeedBack.illegal(fieldName,className+idName+"不合法");
+                            return FeedBack.illegal(fieldName,beanName+idName+"不合法");
                         }
                     } else if (isInteger(valueType)) {
                         if ((Integer)value <= 0) {
-                            return FeedBack.illegal(fieldName,className+idName+"不合法");
+                            return FeedBack.illegal(fieldName,beanName+idName+"不合法");
                         }
                     } else if (isString(valueType)) {
                         if (!StringUtils.hasText((String) value)) {
-                            return FeedBack.illegal(fieldName,className+idName+"不合法");
+                            return FeedBack.illegal(fieldName,beanName+idName+"不合法");
                         }
                     }else {
                         throw new InspectorException("不推荐以"+valueType.getName()+"作为id");
@@ -70,17 +70,17 @@ public abstract class AbstractInspector implements Inspector {
                 }
             }
         }
-        Nullable nullable = AnnotationUtils.findAnnotation(field, Nullable.class);
+        Nullable nullable = AnnotationUtils.findAnnotation(annotatedElement, Nullable.class);
 
         if (nullable != null && value == null) {
             //没有标注的我不能报错,因为用户可能想自己检查这些未标注的字段
             return FeedBack.pass();
         }
         //能走到这里的,有两种可能,没有标注nullable，字段是否为null不清楚或者字段不为null,所以下面需要注意非空判断
-        return specialInspect(field, value, className, fieldName, group);
+        return specialInspect(annotatedElement, value, beanName, fieldName, group);
     }
 
-    public abstract FeedBack specialInspect(AnnotatedElement field, Object value, String className, String fieldName, Class<?> group);
+    public abstract FeedBack specialInspect(AnnotatedElement annotatedElement, Object value, String beanName, String fieldName, Class<?> group);
 
 
     private String getIdName(String fieldName){
