@@ -1,5 +1,8 @@
 package com.landao.inspector.utils;
 
+import com.landao.inspector.annotations.special.group.AddGroup;
+import com.landao.inspector.annotations.special.group.UpdateGroup;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.util.regex.Pattern;
@@ -11,7 +14,7 @@ public abstract class InspectUtils {
 
     public static final String emailPattern="^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
 
-    public static final String telephonyPattern="^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}$";
+    public static final String telephonyPattern="^(13[0-9]|14[5|7]|15[0|12356789]|18[0|12356789])\\d{8}$";
 
     /**
      * id不为空并且大于0
@@ -69,8 +72,17 @@ public abstract class InspectUtils {
         return Pattern.matches(telephonyPattern,str);
     }
 
+    public static boolean isAddGroup(Class<?> group){
+        return AddGroup.class.equals(group);
+    }
 
+    public static boolean isUpdateGroup(Class<?> group){
+        return UpdateGroup.class.equals(group);
+    }
 
+    public static boolean isGroup(Class<?> group,Class<?> specialGroup){
+        return ObjectUtils.nullSafeEquals(group,specialGroup);
+    }
 
 
 

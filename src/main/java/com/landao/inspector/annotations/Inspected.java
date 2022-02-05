@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD,ElementType.PARAMETER})
-public @interface InspectField {
+public @interface Inspected {
 
     @AliasFor("name")
     String value() default "";

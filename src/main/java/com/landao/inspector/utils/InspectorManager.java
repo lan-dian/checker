@@ -2,8 +2,8 @@ package com.landao.inspector.utils;
 
 import com.landao.inspector.InspectorProperties;
 import com.landao.inspector.annotations.InspectBean;
-import com.landao.inspector.annotations.InspectField;
-import com.landao.inspector.model.IllegalsHolder;
+import com.landao.inspector.annotations.Inspected;
+import com.landao.inspector.model.collection.IllegalsHolder;
 import com.landao.inspector.model.enums.InspectMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -23,21 +23,19 @@ public class InspectorManager {
     private static final ThreadLocal<IllegalsHolder> illegalsHolder=ThreadLocal.withInitial(IllegalsHolder::new);
 
     public static void addIllegal(String fieldName,String illegalReason){
-        illegalsHolder.get().add(fieldName,illegalReason);
+        getIllegalsHolder().add(fieldName,illegalReason);
+    }
+
+    public static IllegalsHolder getIllegalsHolder(){
+        return illegalsHolder.get();
+    }
+
+    public static void clear(){
+        illegalsHolder.remove();
     }
 
     public static boolean illegal(){
-        return illegalsHolder.get().illegal();
-    }
-
-
-    public static String getFieldName(InspectField inspectField, Object obj){
-        String result="";
-        InspectBean inspectBean = AnnotationUtils.findAnnotation(obj.getClass(), InspectBean.class);
-        if(inspectBean!=null){
-            result=inspectBean.name();
-        }
-        return result+inspectField.name();
+        return getIllegalsHolder().illegal();
     }
 
     public static boolean isFastFail(){

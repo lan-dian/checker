@@ -1,4 +1,4 @@
-package com.landao.inspector.model;
+package com.landao.inspector.model.collection;
 
 import java.util.List;
 

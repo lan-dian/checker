@@ -1,7 +1,7 @@
 package com.landao.inspector.model.exception;
 
 
-import com.landao.inspector.model.IllegalsHolder;
+import com.landao.inspector.model.collection.IllegalsHolder;
 
 public class InspectIllegalException extends RuntimeException{
 

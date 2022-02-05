@@ -1,4 +1,4 @@
-package com.landao.inspector.model;
+package com.landao.inspector.model.collection;
 
 
 import com.landao.inspector.model.exception.InspectIllegalException;

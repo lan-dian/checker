@@ -8,13 +8,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD,ElementType.PARAMETER})
 public @interface Regex {
 
-    @AliasFor("pattern")
-    String value() default "";
+    /**
+     * 字段名称
+     */
+    String name() default "";
 
-    @AliasFor("value")
+
     String pattern() default "";
+
+
 
 }
