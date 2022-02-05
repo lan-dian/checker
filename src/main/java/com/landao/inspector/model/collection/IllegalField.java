@@ -1,36 +1,34 @@
 package com.landao.inspector.model.collection;
 
-import java.util.List;
-
 
 public class IllegalField {
 
-    private String fieldName;
+    private String field;
 
-    private String illegalReason;
+    private String reason;
 
     public IllegalField() {
     }
 
-    public IllegalField(String fieldName, String illegalReason) {
-        this.fieldName = fieldName;
-        this.illegalReason = illegalReason;
+    public IllegalField(String field, String reason) {
+        this.field = field;
+        this.reason = reason;
     }
 
-    public String getFieldName() {
-        return fieldName;
+    public String getField() {
+        return field;
     }
 
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
+    public void setField(String field) {
+        this.field = field;
     }
 
-    public String getIllegalReason() {
-        return illegalReason;
+    public String getReason() {
+        return reason;
     }
 
-    public void setIllegalReason(String illegalReason) {
-        this.illegalReason = illegalReason;
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 
 }

@@ -83,6 +83,13 @@ public abstract class AbstractInspector implements Inspector {
 
     public abstract FeedBack specialInspect(AnnotatedElement annotatedElement, Object value, String beanName, String fieldName, Class<?> group);
 
+    protected String getDisplayName(String beanName,String fieldName){
+        if(StringUtils.hasText(beanName)){
+            return beanName+"的"+fieldName;
+        }else {
+            return fieldName;
+        }
+    }
 
     private String getIdName(String fieldName){
         return fieldName.split("\\.")[1];

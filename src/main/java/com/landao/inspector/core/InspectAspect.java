@@ -89,11 +89,13 @@ public class InspectAspect implements Ordered {
                 continue;
             }
             if(arg instanceof Inspect){
-                inspectBean(arg,"",group);
+                InspectBean inspectBean = AnnotationUtils.findAnnotation(argType, InspectBean.class);
+                inspectBean(arg,"",inspectBean,group);
                 Inspect inspect = (Inspect) arg;
                 inspect.inspect(group);
             }else if(isRequestBody(argType) || isInspectField(argType)){
-                inspectBean(arg,"",group);
+                InspectBean inspectBean = AnnotationUtils.findAnnotation(argType, InspectBean.class);
+                inspectBean(arg,"",inspectBean,group);
             }else if(inspectors.containsKey(argType)){
                 Parameter parameter = parameters[i];
                 FeedBack feedBack = inspectors.get(argType).inspect(parameter, arg, "", parameter.getName(), group);
@@ -120,10 +122,10 @@ public class InspectAspect implements Ordered {
      * 处理没有特殊情况的校验
      * @param bean 需要校验的对象
      */
-    public void inspectBean(Object bean,String className, Class<?> group){
+    public void inspectBean(Object bean,String className,InspectBean inspectBean,Class<?> group){
         Class<?> beanClass = bean.getClass();
         Field[] fields = beanClass.getDeclaredFields();
-        InspectBean inspectBean = AnnotationUtils.findAnnotation(beanClass, InspectBean.class);
+
         String beanName="";
         if(inspectBean!=null){
             beanName=inspectBean.name();
@@ -144,14 +146,18 @@ public class InspectAspect implements Ordered {
                 className=field.getName()+".";
                 ReflectionUtils.makeAccessible(field);
                 Object innerBean = ReflectionUtils.getField(field, bean);
+                InspectBean innerInspectBean = AnnotationUtils.findAnnotation(field, InspectBean.class);
                 if(innerBean==null){
-                    InspectBean innerInspectBean = AnnotationUtils.findAnnotation(field, InspectBean.class);
                     assert innerInspectBean!=null;
                     if(!innerInspectBean.nullable()){
                         addIllegal(className,innerInspectBean.name()+"不能为空");
                     }
                 }else {
-                    inspectBean(innerBean,className,group);
+                    inspectBean(innerBean,className,innerInspectBean,group);
+                    if(innerBean instanceof Inspect){
+                        Inspect inspect = (Inspect) innerBean;
+                        inspect.inspect(group);
+                    }
                 }
             }
         }

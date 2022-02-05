@@ -55,7 +55,7 @@ public class StringInspector extends AbstractInspector {
         if (inspected == null) {//说明用户想自己检查
             return FeedBack.pass();
         }
-        String displayName=beanName+inspected.name();
+        String displayName=getDisplayName(beanName,inspected.name());
 
         //不可为null
         if (!StringUtils.hasText(fieldValue)) {
