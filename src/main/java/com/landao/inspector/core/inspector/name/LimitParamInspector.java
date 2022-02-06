@@ -2,6 +2,7 @@ package com.landao.inspector.core.inspector.name;
 
 import com.landao.inspector.core.Inspector;
 import com.landao.inspector.model.FeedBack;
+import com.landao.inspector.utils.InspectorManager;
 
 import java.lang.reflect.Parameter;
 
@@ -20,11 +21,21 @@ public class LimitParamInspector implements ParamInspector{
         if(value==null){
             return FeedBack.pass();
         }
-        long limit = (Long) value;
-        if(limit<=0 || limit>30){
-            String parameterName = parameter.getName();
-            return FeedBack.illegal(parameterName,parameterName+"不合法");
+        Class<?> valueType = value.getClass();
+        if(InspectorManager.isInteger(valueType)){
+            int limit = (Integer) value;
+            if(limit<=0 || limit>30){
+                String parameterName = parameter.getName();
+                return FeedBack.illegal(parameterName,parameterName+"不合法");
+            }
+        }else if(InspectorManager.isLong(valueType)){
+            long limit = (Long) value;
+            if(limit<=0 || limit>30){
+                String parameterName = parameter.getName();
+                return FeedBack.illegal(parameterName,parameterName+"不合法");
+            }
         }
+
 
         return FeedBack.pass();
     }

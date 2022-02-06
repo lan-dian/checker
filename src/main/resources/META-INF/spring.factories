@@ -1,4 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.landao.typeInspector.InspectorAutoConfigure,\
-com.landao.typeInspector.core.InspectorScanner
+com.landao.inspector.InspectorAutoConfigure,\
+com.landao.inspector.core.InspectorScanner
 
