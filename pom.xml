@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.landao</groupId>
-    <artifactId>inspector-spring-boot-starter</artifactId>
+    <artifactId>checker-spring-boot-starter</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>inspector-spring-boot-starter</name>
+    <name>checker-spring-boot-starter</name>
     <properties>
         <java.version>1.8</java.version>
     </properties>
