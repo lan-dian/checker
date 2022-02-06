@@ -1,4 +1,4 @@
-package com.landao.inspector.model;
+package com.landao.inspector.core;
 
 import com.landao.inspector.annotations.InspectBean;
 import com.landao.inspector.annotations.special.TelePhone;
@@ -6,6 +6,7 @@ import com.landao.inspector.utils.InspectUtils;
 import com.landao.inspector.utils.InspectorManager;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.AnnotatedType;
 import java.util.Objects;
@@ -17,9 +18,11 @@ public interface Inspect {
 
     /**
      * 重写这个接口实现代码级别的自定义注解
-     * @param group 当前检查的分组会传递给你
+     * @param group 分组
+     * @param supperName 超类链的名称
+     * @apiNote 使用getFieldName组合
      */
-    void inspect(Class<?> group);
+    void inspect(Class<?> group,String supperName);
 
     //不去实现下面的方法,这些是为了方便你直接使用的
     default boolean isAddGroup(Class<?> group){
@@ -31,23 +34,14 @@ public interface Inspect {
     }
 
     default void addIllegal(String fieldName,String illegalReason){
-        InspectorManager.addIllegal(getClassName()+fieldName,illegalReason);
+        InspectorManager.addIllegal(fieldName,illegalReason);
     }
 
-    default String getClassName(){
-        Class<? extends Inspect> thisClazz = this.getClass();
-        if(ClassUtils.isInnerClass(thisClazz)){
-            return getClassName(thisClazz.getSuperclass(),thisClazz.getSimpleName()+".");
+    default String getFieldName(String supperName,String fieldName){
+        if(StringUtils.hasText(supperName)){
+            return supperName+fieldName;
         }else {
-            return "";
-        }
-    }
-
-    default String getClassName(Class<?> clazz,String className){
-        if(ClassUtils.isInnerClass(clazz)){
-            return getClassName(clazz.getSuperclass(),className+".");
-        }else {
-            return clazz.getSimpleName()+"."+className;
+            return fieldName;
         }
     }
 

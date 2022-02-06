@@ -1,10 +1,10 @@
-package com.landao.inspector.core.inspector;
+package com.landao.inspector.core.inspector.type;
 
 import com.landao.inspector.annotations.Inspected;
 import com.landao.inspector.annotations.special.Email;
 import com.landao.inspector.annotations.special.Regex;
 import com.landao.inspector.annotations.special.TelePhone;
-import com.landao.inspector.core.Handler;
+import com.landao.inspector.core.Inspector;
 import com.landao.inspector.model.FeedBack;
 import com.landao.inspector.model.collection.TypeSet;
 import com.landao.inspector.model.enums.TrimType;
@@ -16,8 +16,8 @@ import org.springframework.util.StringUtils;
 import java.lang.reflect.AnnotatedElement;
 import java.util.regex.Pattern;
 
-@Handler
-public class StringInspector extends AbstractInspector {
+@Inspector
+public class StringTypeInspector extends AbstractTypeInspector {
 
     @Override
     public TypeSet supportedChain(TypeSet set) {

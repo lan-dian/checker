@@ -1,23 +1,23 @@
-package com.landao.inspector.core.inspector;
+package com.landao.inspector.core.inspector.type;
 
 import com.landao.inspector.annotations.Inspected;
-import com.landao.inspector.core.Handler;
+import com.landao.inspector.core.Inspector;
 import com.landao.inspector.model.FeedBack;
 import com.landao.inspector.model.collection.TypeSet;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.reflect.AnnotatedElement;
 
-@Handler
-public class LongInspector extends AbstractInspector{
+@Inspector
+public class IntegerTypeInspector extends AbstractTypeInspector {
 
     @Override
     public TypeSet supportedChain(TypeSet set) {
-        return set.addChain(Long.class).addChain(long.class);
+        return set.addChain(Integer.class).addChain(int.class);
     }
 
     @Override
-    public FeedBack specialInspect(AnnotatedElement annotatedElement, Object value,String beanName,String fieldName, Class<?> group) {
+    public FeedBack specialInspect(AnnotatedElement annotatedElement, Object value, String beanName, String fieldName, Class<?> group) {
         Inspected inspected = AnnotationUtils.findAnnotation(annotatedElement, Inspected.class);
         if (inspected == null) {
             return FeedBack.pass();
@@ -28,7 +28,7 @@ public class LongInspector extends AbstractInspector{
             return FeedBack.illegal(fieldName,displayName+"不能为空");
         }
 
-        long fieldValue=(Long) value;
+        int fieldValue=(Integer) value;
 
         long min = inspected.min();
         long max = inspected.max();

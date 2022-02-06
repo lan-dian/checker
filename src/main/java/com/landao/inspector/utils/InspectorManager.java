@@ -43,4 +43,16 @@ public class InspectorManager {
         return inspectMode==InspectMode.FastFailed;
     }
 
+    public static boolean isInteger(Class<?> fieldType) {
+        return Integer.class.equals(fieldType) || int.class.equals(fieldType);
+    }
+
+    public static boolean isLong(Class<?> fieldType) {
+        return Long.class.equals(fieldType) || long.class.equals(fieldType);
+    }
+
+    public static boolean isString(Class<?> fieldType) {
+        return String.class.equals(fieldType);
+    }
+
 }

@@ -1,11 +1,8 @@
-package com.landao.inspector.core.inspector;
+package com.landao.inspector.core.inspector.type;
 
-import com.landao.inspector.annotations.InspectBean;
-import com.landao.inspector.annotations.Inspected;
 import com.landao.inspector.annotations.special.group.AddIgnore;
 import com.landao.inspector.annotations.special.group.Id;
 import com.landao.inspector.annotations.special.group.UpdateIgnore;
-import com.landao.inspector.core.Inspector;
 import com.landao.inspector.model.FeedBack;
 import com.landao.inspector.model.collection.TypeSet;
 import com.landao.inspector.model.exception.InspectorException;
@@ -13,22 +10,18 @@ import com.landao.inspector.utils.InspectUtils;
 import com.landao.inspector.utils.InspectorManager;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.lang.Nullable;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.lang.reflect.Parameter;
-import java.util.List;
-import java.util.Map;
+
 
 /**
  * 做一些必要的初始化工作
  */
-public abstract class AbstractInspector implements Inspector {
+public abstract class AbstractTypeInspector implements TypeInspector {
 
     @Override
-    public TypeSet supportedClasses() {
+    public TypeSet supportClasses() {
         return supportedChain(new TypeSet());
     }
 
@@ -53,15 +46,15 @@ public abstract class AbstractInspector implements Inspector {
                         return FeedBack.illegal(fieldName,"修改"+beanName+"时必须指明"+idName);
                     }
                     Class<?> valueType = value.getClass();
-                    if (isLong(valueType)) {
+                    if (InspectorManager.isLong(valueType)) {
                         if ( (Long) value <= 0) {
                             return FeedBack.illegal(fieldName,beanName+idName+"不合法");
                         }
-                    } else if (isInteger(valueType)) {
+                    } else if (InspectorManager.isInteger(valueType)) {
                         if ((Integer)value <= 0) {
                             return FeedBack.illegal(fieldName,beanName+idName+"不合法");
                         }
-                    } else if (isString(valueType)) {
+                    } else if (InspectorManager.isString(valueType)) {
                         if (!StringUtils.hasText((String) value)) {
                             return FeedBack.illegal(fieldName,beanName+idName+"不合法");
                         }
@@ -116,16 +109,6 @@ public abstract class AbstractInspector implements Inspector {
         return false;
     }
 
-    private boolean isInteger(Class<?> fieldType) {
-        return Integer.class.equals(fieldType) || int.class.equals(fieldType);
-    }
 
-    private boolean isLong(Class<?> fieldType) {
-        return Long.class.equals(fieldType) || long.class.equals(fieldType);
-    }
-
-    private boolean isString(Class<?> fieldType) {
-        return String.class.equals(fieldType);
-    }
 
 }

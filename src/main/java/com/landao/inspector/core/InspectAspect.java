@@ -4,11 +4,11 @@ import com.landao.inspector.InspectorProperties;
 import com.landao.inspector.annotations.Inspected;
 import com.landao.inspector.annotations.InspectBean;
 import com.landao.inspector.annotations.special.group.SpecialInspect;
+import com.landao.inspector.core.inspector.name.JumpOverParam;
+import com.landao.inspector.core.inspector.name.ParamInspector;
+import com.landao.inspector.core.inspector.type.TypeInspector;
 import com.landao.inspector.model.FeedBack;
-import com.landao.inspector.model.collection.IllegalsHolder;
-import com.landao.inspector.model.Inspect;
 import com.landao.inspector.model.exception.InspectIllegalException;
-import com.landao.inspector.model.exception.InspectorException;
 import com.landao.inspector.utils.InspectorManager;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -18,20 +18,17 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Aspect
@@ -43,17 +40,21 @@ public class InspectAspect implements Ordered {
     @Resource
     private InspectorProperties inspectorProperties;
 
-    private final Map<Class<?>, Inspector> inspectors =new HashMap<>();
+    private final Map<Class<?>, TypeInspector> typeInspectors =new HashMap<>();
+
+    private final List<ParamInspector> paramInspectors=new ArrayList<>();
 
     @PostConstruct
     public void initInspectors(){
-        Map<String, Inspector> inspectors = applicationContext.getBeansOfType(Inspector.class);
-        for (Inspector inspector : inspectors.values()) {
-            Set<Class<?>> classes = inspector.supportedClasses();
+        Map<String, TypeInspector> typeInspectors = applicationContext.getBeansOfType(TypeInspector.class);
+        for (TypeInspector typeInspector : typeInspectors.values()) {
+            Set<Class<?>> classes = typeInspector.supportClasses();
             for (Class<?> clazz : classes) {
-                this.inspectors.put(clazz,inspector);
+                this.typeInspectors.put(clazz, typeInspector);
             }
         }
+        Map<String, ParamInspector> paramInspectors = applicationContext.getBeansOfType(ParamInspector.class);
+        this.paramInspectors.addAll(paramInspectors.values());
     }
 
     @Pointcut("@within(org.springframework.web.bind.annotation.RestController)" + "||" + "@within(org.springframework.stereotype.Controller)")
@@ -70,6 +71,12 @@ public class InspectAspect implements Ordered {
         Class<?> group=null;
         if(specialInspect!=null){
             group=specialInspect.value();
+        }
+
+        Set<String> paramBan=Collections.emptySet();
+        JumpOverParam jumpOverParam = AnnotationUtils.findAnnotation(method, JumpOverParam.class);
+        if(jumpOverParam!=null){
+            paramBan = Arrays.stream(jumpOverParam.onlyFor()).collect(Collectors.toSet());
         }
 
         Parameter[] parameters = method.getParameters();
@@ -92,15 +99,40 @@ public class InspectAspect implements Ordered {
                 InspectBean inspectBean = AnnotationUtils.findAnnotation(argType, InspectBean.class);
                 inspectBean(arg,"",inspectBean,group);
                 Inspect inspect = (Inspect) arg;
-                inspect.inspect(group);
+                inspect.inspect(group,"");
             }else if(isRequestBody(argType) || isInspectField(argType)){
                 InspectBean inspectBean = AnnotationUtils.findAnnotation(argType, InspectBean.class);
                 inspectBean(arg,"",inspectBean,group);
-            }else if(inspectors.containsKey(argType)){
+            }else if(typeInspectors.containsKey(argType)){
                 Parameter parameter = parameters[i];
-                FeedBack feedBack = inspectors.get(argType).inspect(parameter, arg, "", parameter.getName(), group);
-                if(feedBack.requiresNewValue()){
-                    args[i]=feedBack.getNewValue();
+                String parameterName = parameter.getName();
+                boolean beBan=false;
+                if(jumpOverParam!=null){
+                    if(paramBan.isEmpty()){
+                        //全部进制
+                        beBan=true;
+                    }else if(paramBan.contains(parameterName)){
+                        beBan=true;
+                    }
+                }
+                boolean hasParamInspector=false;
+                if(!beBan){
+                    for (ParamInspector paramInspector : paramInspectors) {
+                        if(paramInspector.supportParameter(parameterName)){
+                            FeedBack feedBack = paramInspector.handleParameter(parameter, arg);
+                            if(feedBack.requiresNewValue()){
+                                args[i]=feedBack.getNewValue();
+                            }
+                            hasParamInspector=true;
+                            break;
+                        }
+                    }
+                }
+                if(!hasParamInspector){//依据类型根据用户自定义的处理
+                    FeedBack feedBack = typeInspectors.get(argType).inspect(parameter, arg, "", parameter.getName(), group);
+                    if(feedBack.requiresNewValue()){
+                        args[i]=feedBack.getNewValue();
+                    }
                 }
             }
         }
@@ -115,6 +147,7 @@ public class InspectAspect implements Ordered {
             InspectorManager.clear();//清理,防止线程池出错
         }
     }
+
 
 
 
@@ -134,11 +167,11 @@ public class InspectAspect implements Ordered {
         for (Field field : fields) {
             Class<?> fieldType = field.getType();
 
-            Inspector inspector = inspectors.get(fieldType);
-            if(inspector!=null){
+            TypeInspector typeInspector = typeInspectors.get(fieldType);
+            if(typeInspector !=null){
                 ReflectionUtils.makeAccessible(field);
                 Object value = ReflectionUtils.getField(field, bean);
-                FeedBack feedBack = inspector.inspect(field, value, beanName,className+field.getName(), group);
+                FeedBack feedBack = typeInspector.inspect(field, value, beanName,className+field.getName(), group);
                 if(feedBack.requiresNewValue()){
                     ReflectionUtils.setField(field,bean,feedBack.getNewValue());
                 }
@@ -156,7 +189,7 @@ public class InspectAspect implements Ordered {
                     inspectBean(innerBean,className,innerInspectBean,group);
                     if(innerBean instanceof Inspect){
                         Inspect inspect = (Inspect) innerBean;
-                        inspect.inspect(group);
+                        inspect.inspect(group,className);
                     }
                 }
             }
