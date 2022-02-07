@@ -64,6 +64,8 @@ public class CheckAspect implements Ordered {
 
     @Around("doPointCut()")
     public Object check(ProceedingJoinPoint joinPoint) throws Throwable {
+        CheckerManager.clear();
+
         //获取分组
         MethodSignature methodSignature =(MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();

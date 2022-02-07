@@ -2,6 +2,7 @@ package com.landao.checker.model.exception;
 
 
 import com.landao.checker.model.collection.IllegalsHolder;
+import com.landao.checker.utils.CheckerManager;
 
 public class CheckIllegalException extends RuntimeException{
 
