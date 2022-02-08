@@ -4,6 +4,8 @@ import com.landao.checker.utils.CheckUtils;
 import com.landao.checker.utils.CheckerManager;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Field;
+
 /**
  * 你可以自定义认证aop顺序
  */
@@ -15,7 +17,17 @@ public interface Checked {
      * @param supperName 超类链的名称
      * @apiNote 使用getFieldName组合
      */
-    void check(Class<?> group, String supperName);
+    default void check(Class<?> group, String supperName){
+        //这个必然会被调用，比下面两个调用的晚
+    }
+
+    default void addCheck(String supperName){
+        //只有add情况下调用
+    }
+
+    default void updateCheck(String supperName){
+        //只有update时调用
+    }
 
     //不去实现下面的方法,这些是为了方便你直接使用的
     default boolean isAddGroup(Class<?> group){
@@ -26,7 +38,11 @@ public interface Checked {
         return CheckUtils.isUpdateGroup(group);
     }
 
-    default void addIllegal(String fieldName,String illegalReason){
+    default boolean isGroup(Class<?> group,Class<?> target){
+        return CheckUtils.isGroup(group,target);
+    }
+
+    default void addIllegal(String fieldName, String illegalReason){
         CheckerManager.addIllegal(fieldName,illegalReason);
     }
 

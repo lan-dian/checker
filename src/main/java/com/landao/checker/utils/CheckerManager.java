@@ -3,6 +3,7 @@ package com.landao.checker.utils;
 import com.landao.checker.CheckerProperties;
 import com.landao.checker.model.collection.IllegalsHolder;
 import com.landao.checker.model.enums.CheckMode;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**

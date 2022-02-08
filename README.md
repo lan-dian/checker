@@ -111,26 +111,27 @@ public CommonResult<Void> changeInfo(@RequestBody UserInfo userInfo)
 ```java
 @Override
 public void check(Class<?> group,String supperName) {
-    if(isAddGroup(group)){
+        if(isAddGroup(group)){
         if(!StringUtils.hasText(password)){
-            addIllegal("password","密码不能为空");
+        addIllegal("password","密码不能为空");
         }
         if(password.length()!=32){
-            addIllegal("password","密码必须用md5加密");
+        addIllegal("password","密码必须用md5加密");
         }
         password=password.toLowerCase(Locale.ROOT);//转化成小写
-    }
-    if(!(Objects.equals(sex,"女") || Objects.equals(sex,"男"))){
-        addIllegal("sex","性别必须为男或女");
-    }
-    if(birth==null){
-        addIllegal("birth","生日不能为空");
-    }else {
-        if(birth.isAfter(LocalDate.now())){
-            addIllegal("birth","出生日期不能晚于现在");
         }
-    }
+        if(!(Objects.equals(sex,"女") || Objects.equals(sex,"男"))){
+        addIllegal("sex","性别必须为男或女");
+        }
+        if(birth==null){
+        addIllegal("birth","生日不能为空");
+        }else {
+        if(birth.isAfter(LocalDate.now())){
+        addIllegal("birth","出生日期不能晚于现在");
+        }
+        }
 }
+
 ```
 
 ​	你只需要重写这个方法就可以了，而且框架会帮助你自动调用，而且你还有一个情况没有考虑到，就是如果我在分组的情况下，检查方法不一样怎么办？其实spring的校验框架是考虑到这种情况的，但其实，我们的参数校验都差不多的。

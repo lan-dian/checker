@@ -9,6 +9,7 @@ import com.landao.checker.core.checker.name.ParamChecker;
 import com.landao.checker.core.checker.type.TypeChecker;
 import com.landao.checker.model.FeedBack;
 import com.landao.checker.model.exception.CheckIllegalException;
+import com.landao.checker.utils.CheckUtils;
 import com.landao.checker.utils.CheckerManager;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -101,6 +102,11 @@ public class CheckAspect implements Ordered {
                 CheckBean checkBean = AnnotationUtils.findAnnotation(argType, CheckBean.class);
                 checkBean(arg,"", checkBean,group);
                 Checked checked = (Checked) arg;
+                if(CheckUtils.isAddGroup(group)){
+                    checked.addCheck("");
+                }else if(CheckUtils.isUpdateGroup(group)){
+                    checked.updateCheck("");
+                }
                 checked.check(group,"");
             }else if(isRequestBody(argType) || isInspectField(argType)){
                 CheckBean checkBean = AnnotationUtils.findAnnotation(argType, CheckBean.class);
