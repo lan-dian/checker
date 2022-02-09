@@ -9,25 +9,16 @@ import org.springframework.core.annotation.AnnotationUtils;
 import java.lang.reflect.AnnotatedElement;
 
 @Checker
-public class LongTypeChecker extends AbstractTypeChecker {
+public class LongTypeChecker extends AbstractNotNullTypeChecker {
 
     @Override
     public TypeSet supportedChain(TypeSet set) {
         return set.addChain(Long.class).addChain(long.class);
     }
 
-    @Override
-    public FeedBack specialInspect(AnnotatedElement annotatedElement, Object value,String beanName,String fieldName, Class<?> group) {
-        Check check = AnnotationUtils.findAnnotation(annotatedElement, Check.class);
-        if (check == null) {
-            return FeedBack.pass();
-        }
-        String displayName=getDisplayName(beanName, check.name());
-        //不可为null
-        if (value==null) {
-            return FeedBack.illegal(fieldName,displayName+"不能为空");
-        }
 
+    @Override
+    public FeedBack specialTypeCheck(Check check, String displayName, AnnotatedElement annotatedElement, Object value, String fieldName, Class<?> group) {
         long fieldValue=(Long) value;
 
         long min = check.min();
@@ -38,5 +29,4 @@ public class LongTypeChecker extends AbstractTypeChecker {
 
         return FeedBack.pass();
     }
-
 }

@@ -78,10 +78,10 @@ public abstract class AbstractTypeChecker implements TypeChecker {
         }
 
         //能走到这里的,有两种可能,没有标注nullable，字段是否为null不清楚或者字段不为null,所以下面需要注意非空判断
-        return specialInspect(annotatedElement, value, beanName, fieldName, group);
+        return commonTypeCheck(annotatedElement, value, beanName, fieldName, group);
     }
 
-    public abstract FeedBack specialInspect(AnnotatedElement annotatedElement, Object value, String beanName, String fieldName, Class<?> group);
+    public abstract FeedBack commonTypeCheck(AnnotatedElement annotatedElement, Object value, String beanName, String fieldName, Class<?> group);
 
     protected String getDisplayName(String beanName,String fieldName){
         if(StringUtils.hasText(beanName)){

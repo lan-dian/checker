@@ -6,8 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD,ElementType.PARAMETER})
-public @interface TelePhone {
+@Target({ElementType.PARAMETER,ElementType.FIELD})
+public @interface NotBefore {
 
+    boolean containsNow() default false;
+
+    /**
+     * 对于datetime仅仅检查日期部分
+     */
+    boolean onlyCheckDate() default true;
 
 }

@@ -25,7 +25,7 @@ public class StringTypeChecker extends AbstractTypeChecker {
     }
 
     @Override
-    public FeedBack specialInspect(AnnotatedElement annotatedElement, Object value,String beanName,String fieldName, Class<?> group) {
+    public FeedBack commonTypeCheck(AnnotatedElement annotatedElement, Object value, String beanName, String fieldName, Class<?> group) {
         String fieldValue=(String) value;
         //todo xss 校验
 
