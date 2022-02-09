@@ -35,6 +35,8 @@ public abstract class AbstractTypeChecker implements TypeChecker {
             return FeedBack.pass();
         }
 
+
+
         if (group != null) {
             if (isAddGroup(group)) {//就处理这两种,其他放行
                 if (requireSetNull(annotatedElement)) {
@@ -70,14 +72,19 @@ public abstract class AbstractTypeChecker implements TypeChecker {
                 }
             }
         }
-        Nullable nullable = AnnotationUtils.findAnnotation(annotatedElement, Nullable.class);
 
-        if (nullable != null && value == null) {
-            //没有标注的我不能报错,因为用户可能想自己检查这些未标注的字段
-            return FeedBack.pass();
+        Nullable nullable = AnnotationUtils.findAnnotation(annotatedElement, Nullable.class);
+        if(nullable!=null){
+            if(value==null){
+                return FeedBack.pass();
+            }
+            if(CheckerManager.isString(value.getClass())){
+                if(!StringUtils.hasText((String) value)){
+                    return FeedBack.pass(null);
+                }
+            }
         }
 
-        //能走到这里的,有两种可能,没有标注nullable，字段是否为null不清楚或者字段不为null,所以下面需要注意非空判断
         return commonTypeCheck(annotatedElement, value, beanName, fieldName, group);
     }
 

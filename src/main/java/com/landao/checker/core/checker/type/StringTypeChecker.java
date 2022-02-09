@@ -11,6 +11,7 @@ import com.landao.checker.model.enums.TrimType;
 import com.landao.checker.utils.CheckUtils;
 
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.AnnotatedElement;

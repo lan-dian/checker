@@ -30,7 +30,7 @@ public abstract class CheckUtils {
 
     public static final String emailPattern = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
 
-    public static final String telephonyPattern = "^[1][358]\\\\d{9}$";
+    public static final String telephonyPattern = "^1[0-9]{10}$";
 
     /**
      * id不为空并且大于0
@@ -538,6 +538,11 @@ public abstract class CheckUtils {
             }
         }
         return str;
+    }
+
+    public static void main(String[] args) {
+        boolean telephone = isTelephone("19147019033");
+        System.out.println("telephone = " + telephone);
     }
 
 
