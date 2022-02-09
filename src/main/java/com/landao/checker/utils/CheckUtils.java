@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -113,6 +114,54 @@ public abstract class CheckUtils {
         }
     }
 
+    public static void moreThan(int num, int target, String fieldName, String name,String targetName) {
+        if (num < target) {
+            throwIllegal(fieldName, name + "不能小于" + targetName);
+        }
+    }
+
+    public static void moreThan(long num, int target, String fieldName, String name,String targetName) {
+        if (num < target) {
+            throwIllegal(fieldName, name + "不能小于" + targetName);
+        }
+    }
+
+    public static void more(int num, int target, String fieldName, String name,String targetName) {
+        if (num <= target) {
+            throwIllegal(fieldName, name + "必须大于" + targetName);
+        }
+    }
+
+    public static void more(long num, int target, String fieldName, String name,String targetName) {
+        if (num <= target) {
+            throwIllegal(fieldName, name + "必须大于" + targetName);
+        }
+    }
+
+    public static void lessThan(int num, int target, String fieldName, String name,String targetName) {
+        if (num > target) {
+            throwIllegal(fieldName, name + "不能大于" + targetName);
+        }
+    }
+
+    public static void lessThan(long num, int target, String fieldName, String name,String targetName) {
+        if (num > target) {
+            throwIllegal(fieldName, name + "不能大于" + targetName);
+        }
+    }
+
+    public static void less(int num, int target, String fieldName, String name,String targetName) {
+        if (num >= target) {
+            throwIllegal(fieldName, name + "必须大于" + targetName);
+        }
+    }
+
+    public static void less(long num, int target, String fieldName, String name,String targetName) {
+        if (num >= target) {
+            throwIllegal(fieldName, name + "必须大于" + targetName);
+        }
+    }
+
     public static void positive(int num, String fieldName, String name) {
         if (num <= 0) {
             throwIllegal(fieldName, name + "必须为正数");
@@ -169,6 +218,15 @@ public abstract class CheckUtils {
             }
         }
         return str;
+    }
+
+    public static void in(String str,String fieldName,String name,String... ins){
+        for (String in : ins) {
+            if(Objects.equals(in,str)){
+                return;
+            }
+        }
+        throwIllegal(fieldName,name+"必须为"+ Arrays.toString(ins)+"之一");
     }
 
     public static void before(LocalDate date,LocalDate target,String fieldName,String name){
@@ -243,7 +301,77 @@ public abstract class CheckUtils {
         }
     }
 
+    public static void before(LocalDate date,LocalDate target,String fieldName,String name,String targetName){
+        if(date.compareTo(target)>=0){
+            throwIllegal(fieldName,name+"必须在"+targetName+"之前");
+        }
+    }
 
+    public static void before(LocalTime date,LocalTime target,String fieldName,String name,String targetName){
+        if(date.compareTo(target)>=0){
+            throwIllegal(fieldName,name+"必须在"+targetName+"之前");
+        }
+    }
+
+    public static void before(LocalDateTime date, LocalDateTime target, String fieldName, String name,String targetName){
+        if(date.compareTo(target)>=0){
+            throwIllegal(fieldName,name+"必须在"+targetName+"之前");
+        }
+    }
+
+    public static void beforeEqual(LocalDate date,LocalDate target,String fieldName,String name,String targetName){
+        if(date.compareTo(target)>0){
+            throwIllegal(fieldName,name+"不能晚于"+targetName);
+        }
+    }
+
+    public static void beforeEqual(LocalTime date,LocalTime target,String fieldName,String name,String targetName){
+        if(date.compareTo(target)>0){
+            throwIllegal(fieldName,name+"不能晚于"+targetName);
+        }
+    }
+
+    public static void beforeEqual(LocalDateTime date, LocalDateTime target, String fieldName, String name,String targetName){
+        if(date.compareTo(target)>0){
+            throwIllegal(fieldName,name+"不能晚于"+targetName);
+        }
+    }
+
+    public static void after(LocalDate date,LocalDate target,String fieldName,String name,String targetName){
+        if(date.compareTo(target)<=0){
+            throwIllegal(fieldName,name+"必须在"+targetName+"之后");
+        }
+    }
+
+    public static void after(LocalTime date,LocalTime target,String fieldName,String name,String targetName){
+        if(date.compareTo(target)<=0){
+            throwIllegal(fieldName,name+"必须在"+targetName+"之后");
+        }
+    }
+
+    public static void after(LocalDateTime date, LocalDateTime target, String fieldName, String name,String targetName){
+        if(date.compareTo(target)<=0){
+            throwIllegal(fieldName,name+"必须在"+targetName+"之后");
+        }
+    }
+
+    public static void afterEqual(LocalDate date,LocalDate target,String fieldName,String name,String targetName){
+        if(date.compareTo(target)<0){
+            throwIllegal(fieldName,name+"不能早于"+targetName);
+        }
+    }
+
+    public static void afterEqual(LocalTime date,LocalTime target,String fieldName,String name,String targetName){
+        if(date.compareTo(target)<0){
+            throwIllegal(fieldName,name+"不能早于"+targetName);
+        }
+    }
+
+    public static void afterEqual(LocalDateTime date, LocalDateTime target, String fieldName, String name,String targetName){
+        if(date.compareTo(target)<0){
+            throwIllegal(fieldName,name+"不能早于"+targetName);
+        }
+    }
 
 
     /**
