@@ -35,8 +35,6 @@ public abstract class AbstractTypeChecker implements TypeChecker {
             return FeedBack.pass();
         }
 
-
-
         if (group != null) {
             if (isAddGroup(group)) {//就处理这两种,其他放行
                 if (requireSetNull(annotatedElement)) {

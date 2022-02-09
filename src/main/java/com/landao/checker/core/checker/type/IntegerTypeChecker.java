@@ -4,12 +4,11 @@ import com.landao.checker.annotations.Check;
 import com.landao.checker.core.checker.Checker;
 import com.landao.checker.model.FeedBack;
 import com.landao.checker.model.collection.TypeSet;
-import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.reflect.AnnotatedElement;
 
 @Checker
-public class IntegerTypeChecker extends AbstractNotNullTypeChecker {
+public class IntegerTypeChecker extends AbstractNumberTypeChecker {
 
     @Override
     public TypeSet supportedChain(TypeSet set) {

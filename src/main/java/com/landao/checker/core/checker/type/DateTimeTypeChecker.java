@@ -2,8 +2,8 @@ package com.landao.checker.core.checker.type;
 
 
 import com.landao.checker.annotations.Check;
-import com.landao.checker.annotations.special.NotAfter;
-import com.landao.checker.annotations.special.NotBefore;
+import com.landao.checker.annotations.special.Before;
+import com.landao.checker.annotations.special.After;
 import com.landao.checker.core.checker.Checker;
 import com.landao.checker.model.FeedBack;
 import com.landao.checker.model.collection.TypeSet;
@@ -14,16 +14,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Checker
-public class DateTimeTypeChecker extends AbstractNotNullTypeChecker{
+public class DateTimeTypeChecker extends AbstractDateTypeChecker {
 
     @Override
-    public FeedBack specialTypeCheck(Check check, String displayName, AnnotatedElement annotatedElement, Object value, String fieldName, Class<?> group) {
+    public FeedBack specialTypeCheck(String displayName, AnnotatedElement annotatedElement, Object value, String fieldName, Class<?> group) {
         LocalDateTime fieldValue=(LocalDateTime) value;
 
-        NotBefore notBefore = AnnotationUtils.findAnnotation(annotatedElement, NotBefore.class);
-        if(notBefore!=null){
-            boolean onlyCheckDate = notBefore.onlyCheckDate();
-            boolean containsNow = notBefore.containsNow();
+        After after = AnnotationUtils.findAnnotation(annotatedElement, After.class);
+        if(after !=null){
+            boolean onlyCheckDate = after.onlyCheckDate();
+            boolean containsNow = after.containsNow();
             if(onlyCheckDate){
                 LocalDate now = LocalDate.now();
                 LocalDate date = fieldValue.toLocalDate();
@@ -42,10 +42,10 @@ public class DateTimeTypeChecker extends AbstractNotNullTypeChecker{
             }
             return FeedBack.pass();
         }
-        NotAfter notAfter = AnnotationUtils.findAnnotation(annotatedElement, NotAfter.class);
-        if(notAfter!=null){
-            boolean onlyCheckDate = notAfter.onlyCheckDate();
-            boolean containsNow = notAfter.containsNow();
+        Before before = AnnotationUtils.findAnnotation(annotatedElement, Before.class);
+        if(before !=null){
+            boolean onlyCheckDate = before.onlyCheckDate();
+            boolean containsNow = before.containsNow();
             if(onlyCheckDate){
                 LocalDate now = LocalDate.now();
                 LocalDate date = fieldValue.toLocalDate();

@@ -6,7 +6,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.reflect.AnnotatedElement;
 
-public abstract class AbstractNotNullTypeChecker extends AbstractTypeChecker{
+public abstract class AbstractNumberTypeChecker extends AbstractTypeChecker{
 
     @Override
     public FeedBack commonTypeCheck(AnnotatedElement annotatedElement, Object value, String beanName, String fieldName, Class<?> group) {
