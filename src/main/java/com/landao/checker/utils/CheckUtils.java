@@ -90,13 +90,13 @@ public abstract class CheckUtils {
         }
     }
 
-    public static void lessThan(int num, int target, String fieldName, String name) {
+    public static void lessEqual(int num, int target, String fieldName, String name) {
         if (num > target) {
             throwIllegal(fieldName, name + "不能大于" + target);
         }
     }
 
-    public static void lessThan(long num, int target, String fieldName, String name) {
+    public static void lessEqual(long num, int target, String fieldName, String name) {
         if (num > target) {
             throwIllegal(fieldName, name + "不能大于" + target);
         }
@@ -104,13 +104,13 @@ public abstract class CheckUtils {
 
     public static void less(int num, int target, String fieldName, String name) {
         if (num >= target) {
-            throwIllegal(fieldName, name + "必须大于" + target);
+            throwIllegal(fieldName, name + "必须小于" + target);
         }
     }
 
     public static void less(long num, int target, String fieldName, String name) {
         if (num >= target) {
-            throwIllegal(fieldName, name + "必须大于" + target);
+            throwIllegal(fieldName, name + "必须小于" + target);
         }
     }
 
@@ -138,13 +138,13 @@ public abstract class CheckUtils {
         }
     }
 
-    public static void lessThan(int num, int target, String fieldName, String name,String targetName) {
+    public static void lessEqual(int num, int target, String fieldName, String name, String targetName) {
         if (num > target) {
             throwIllegal(fieldName, name + "不能大于" + targetName);
         }
     }
 
-    public static void lessThan(long num, int target, String fieldName, String name,String targetName) {
+    public static void lessEqual(long num, int target, String fieldName, String name, String targetName) {
         if (num > target) {
             throwIllegal(fieldName, name + "不能大于" + targetName);
         }
@@ -152,13 +152,13 @@ public abstract class CheckUtils {
 
     public static void less(int num, int target, String fieldName, String name,String targetName) {
         if (num >= target) {
-            throwIllegal(fieldName, name + "必须大于" + targetName);
+            throwIllegal(fieldName, name + "必须小于" + targetName);
         }
     }
 
     public static void less(long num, int target, String fieldName, String name,String targetName) {
         if (num >= target) {
-            throwIllegal(fieldName, name + "必须大于" + targetName);
+            throwIllegal(fieldName, name + "必须小于" + targetName);
         }
     }
 
