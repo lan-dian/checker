@@ -42,16 +42,8 @@ public interface Checked {
         return CheckUtils.isGroup(group,target);
     }
 
-    default void addIllegal(String fieldName, String illegalReason){
+    default void throwIllegal(String fieldName, String illegalReason){
         CheckerManager.addIllegal(fieldName,illegalReason);
-    }
-
-    default String getFieldName(String supperName,String fieldName){
-        if(StringUtils.hasText(supperName)){
-            return supperName+fieldName;
-        }else {
-            return fieldName;
-        }
     }
 
 }
