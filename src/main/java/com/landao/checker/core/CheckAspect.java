@@ -60,9 +60,7 @@ public class CheckAspect implements Ordered {
 
 
 
-    @Pointcut("@within(org.springframework.web.bind.annotation.RestController)"
-            + "||" + "@within(org.springframework.stereotype.Controller)"
-            + "||" + "@within(com.landao.web.plus.annotation.RequestController)")
+    @Pointcut("execution(public * *..controller.*.*(..))")
     public void doPointCut() {
 
     }
